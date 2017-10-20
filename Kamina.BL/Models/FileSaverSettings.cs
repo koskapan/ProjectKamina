@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Kamina.BL.Models
 {
-    public class UserBo
+    public class FileSaverSettings
     {
-        public  Guid Id { get; set; }
-
-        public  String Name { get; set; }
+        public  String Location { get; set; }
     }
 }

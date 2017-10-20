@@ -8,6 +8,8 @@ namespace Kamina.BL.Models
     {
         public Guid Id { get; set; }
 
+        public CategoryBo Category { get; set; }
+
         public  String Name { get; set; }
         
         public IEnumerable<VersionBo> Versions { get; set; }

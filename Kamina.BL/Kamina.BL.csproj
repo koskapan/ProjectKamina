@@ -30,7 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,12 +48,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CategoryBo.cs" />
-    <Compile Include="Services\IMaterialsSaver.cs" />
+    <Compile Include="Models\FileSaverSettings.cs" />
+    <Compile Include="Services\IFileSaver.cs" />
     <Compile Include="Models\MaterialBo.cs" />
+    <Compile Include="Services\LocalFileSaver.cs" />
     <Compile Include="Services\MaterialsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\UserBo.cs" />
     <Compile Include="Models\VersionBo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kamina.DAL\Kamina.DAL.csproj">
+      <Project>{60294D52-8CC0-406F-8E75-1A72D46D79C8}</Project>
+      <Name>Kamina.DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

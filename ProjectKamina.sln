@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamina.DAL", "Kamina.DAL\Ka
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamina.Test", "Kamina.Test\Kamina.Test.csproj", "{BC48D3D4-E379-48A9-92DD-62FC5B23DAEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kamina.Web", "Kamina.Web\Kamina.Web.csproj", "{D974BD89-E794-42E0-9890-9BADDACBCCA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BC48D3D4-E379-48A9-92DD-62FC5B23DAEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC48D3D4-E379-48A9-92DD-62FC5B23DAEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC48D3D4-E379-48A9-92DD-62FC5B23DAEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D974BD89-E794-42E0-9890-9BADDACBCCA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D974BD89-E794-42E0-9890-9BADDACBCCA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D974BD89-E794-42E0-9890-9BADDACBCCA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D974BD89-E794-42E0-9890-9BADDACBCCA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

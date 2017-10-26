@@ -19,39 +19,32 @@ namespace Kamina.Test
         {
             FileSaverSettings settings = new FileSaverSettings()
             {
-                Location =  "D:\\kamina"
+                Location = "D:\\kamina"
             };
 
-            var fileName = "File.txt";
+            var fileName = $"{settings.Location}\\File.txt";
 
-            if (!File.Exists($"D:\\{fileName}"))
+            if (!File.Exists(fileName))
             {
-                using (var writer = File.CreateText($"D:\\{fileName}"))
+                using (var writer = File.CreateText(fileName))
                 {
                     writer.WriteLine(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
                 }
             }
-            
-            
+
+
             IFileSaver fileSaver = new LocalFileSaver(settings);
 
-            MaterialsService service = new MaterialsService {FileSaver = fileSaver};
-
-            MaterialBo newMaterial = new MaterialBo()
-            {
-                Category = new CategoryBo() { Id = Guid.Parse("b12070ae-cccb-4e25-ad51-3d56d19b5eb3") },
-                Name = fileName
-            };
-
+            IMaterialsService service = new MaterialsService(fileSaver);
+            
             MaterialBo createdMaterial = null;
-            
 
-              using (var stream = File.OpenRead($"D:\\{fileName}"))
-                {
-                    createdMaterial = await service.CreateNewMaterial(newMaterial, stream);
-                }
-            
-              Assert.IsNotNull(createdMaterial);
+            using (var stream = File.OpenRead(fileName))
+            {
+                createdMaterial = await service.CreateNewMaterial(fileName, Guid.Parse("b12070ae-cccb-4e25-ad51-3d56d19b5eb3"), stream);
+            }
+
+            Assert.IsNotNull(createdMaterial);
 
             MaterialBo existingMaterial = await service.GetMaterial(createdMaterial.Id);
 
@@ -68,7 +61,7 @@ namespace Kamina.Test
             Assert.IsTrue(newMaterialFileExist);
 
             using (var md5Hash = MD5.Create())
-            using (var fileStream = File.OpenRead($"D:\\{fileName}"))
+            using (var fileStream = File.OpenRead(fileName))
             using (var existingFileStream = File.OpenRead($"{settings.Location}\\{firstVersionId}"))
             {
                 var fileHashBytes = md5Hash.ComputeHash(fileStream);
@@ -80,6 +73,35 @@ namespace Kamina.Test
             }
         }
 
+        [TestMethod]
+        public async Task Can_Get_Materials()
+        {
+            FileSaverSettings settings = new FileSaverSettings()
+            {
+                Location = "D:\\kamina"
+            };
+            
+            IFileSaver fileSaver = new LocalFileSaver(settings);
+
+            IMaterialsService service = new MaterialsService(fileSaver);
+
+            var categoryId = Guid.Parse("b12070ae-cccb-4e25-ad51-3d56d19b5eb3");
+
+            var materialsContainer = await service.GetAllMaterials(categoryId);
+
+            Assert.IsNotNull(materialsContainer);
+
+            if (materialsContainer.Count > 0)
+            {
+                foreach (var materialsContainerItem in materialsContainer.Items)
+                {
+                    Assert.AreNotEqual(0, materialsContainerItem.Versions.Count());
+
+                    Assert.AreEqual(materialsContainerItem.Versions.Count(), materialsContainerItem.Versions.Max(v => v.VersionNumber));
+                }
+            }
+
+        }
 
         [TestMethod]
         public async Task Can_Create_New_Version()
@@ -89,11 +111,11 @@ namespace Kamina.Test
                 Location = "D:\\kamina"
             };
 
-            var fileName = "File.txt";
+            var fileName = $"{settings.Location}\\File.txt";
 
-            if (!File.Exists($"D:\\{fileName}"))
+            if (!File.Exists(fileName))
             {
-                using (var writer = File.CreateText($"D:\\{fileName}"))
+                using (var writer = File.CreateText(fileName))
                 {
                     writer.WriteLine(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
                 }
@@ -101,8 +123,61 @@ namespace Kamina.Test
 
             IFileSaver fileSaver = new LocalFileSaver(settings);
 
-            MaterialsService service = new MaterialsService { FileSaver = fileSaver };
+            IMaterialsService service = new MaterialsService(fileSaver);
             
+            MaterialBo createdMaterial = null;
+
+            using (var stream = File.OpenRead(fileName))
+            {
+                createdMaterial = await service.CreateNewMaterial(fileName, Guid.Parse("b12070ae-cccb-4e25-ad51-3d56d19b5eb3"), stream);
+            }
+
+
+
+            for (int i = 0; i < 5; i++)
+            {
+
+                var versionFileName = $"{settings.Location}\\file{i}.txt";
+
+                using (var writer = File.CreateText(versionFileName))
+                {
+                    writer.WriteLine(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
+                }
+
+                using (var versionFIleStream = File.OpenRead(versionFileName))
+                {
+                    var createdVersion = await service.CreateNewMaterialVersion(createdMaterial.Id,
+                        versionFIleStream);
+
+                    Assert.IsNotNull(createdVersion);
+
+                    var createdVersionMaterial = await service.GetMaterial(createdMaterial.Id);
+
+                    Assert.AreEqual(i + 2, createdVersionMaterial.Versions.Count());
+
+                    Assert.AreEqual(i + 2, createdVersion.VersionNumber);
+
+                    var fileStreamInfo = await service.GetVersionFile(createdMaterial.Id, createdVersion.VersionNumber);
+
+                    using (var md5Hash = MD5.Create())
+                    using (var fileStream = File.OpenRead(versionFileName))
+                    using (var existingFileStream = fileStreamInfo.FileStream)
+                    {
+                        var fileHashBytes = md5Hash.ComputeHash(fileStream);
+                        var existingFileHashBytes = md5Hash.ComputeHash(existingFileStream);
+
+                        var fileHash = Encoding.Default.GetString(fileHashBytes);
+                        var existingFileHash = Encoding.Default.GetString(existingFileHashBytes);
+                        Assert.AreEqual(fileHash, existingFileHash);
+                    }
+                }
+
+
+            }
+
+
+
         }
+        
     }
 }

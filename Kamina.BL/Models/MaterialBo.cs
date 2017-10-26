@@ -12,6 +12,6 @@ namespace Kamina.BL.Models
 
         public  String Name { get; set; }
         
-        public IEnumerable<VersionBo> Versions { get; set; }
+        public IList<VersionBo> Versions { get; set; }
     }
 }

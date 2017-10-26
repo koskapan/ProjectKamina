@@ -10,16 +10,16 @@ namespace Kamina.BL.Services
 {
     public class LocalFileSaver : IFileSaver
     {
-        private FileSaverSettings _settings;
+        public FileSaverSettings Settings { get; }
 
         public LocalFileSaver(FileSaverSettings settings)
         {
-            _settings = settings;
+            Settings = settings;
         }
 
         public async Task SaveFile(String fileId, Stream fileStream)
         {
-            using (var file = File.Create($"{_settings.Location}\\{fileId}"))
+            using (var file = File.Create($"{Settings.Location}\\{fileId}"))
             {
                 fileStream.Seek(0, SeekOrigin.Begin);
 
@@ -29,9 +29,17 @@ namespace Kamina.BL.Services
 
         public async Task<Stream> GetFile(String fileId)
         {
-            using (var fileStream = File.OpenRead($"{_settings.Location}\\{fileId}"))
+            var filePath = $"{Settings.Location}\\{fileId}";
+
+            if (File.Exists(filePath))
             {
+                var fileStream = File.OpenRead(filePath);
+
                 return fileStream;
+            }
+            else
+            {
+                throw new FileNotFoundException();
             }
         }
     }

@@ -19,16 +19,6 @@ namespace Kamina.Web
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-            
-            var unityContainer = new UnityContainer();
-
-            UnityConfig.ConfigureContainer(unityContainer);
-
-            config.DependencyResolver = new UnityDependencyResolver(unityContainer);
-
-            var jsonFormatter = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-
-            jsonFormatter.UseDataContractJsonSerializer = true;
 
         }
     }
